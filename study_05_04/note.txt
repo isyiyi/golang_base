@@ -1,7 +1,0 @@
-creating a new branch is quick and simple
-
-
-hello
-wow
-test no fast forward
-test git stash
