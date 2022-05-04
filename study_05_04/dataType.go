@@ -7,5 +7,6 @@ func main() {
     var str1 string = "hello golang"
     var bol1 bool = false
     fmt.Println(num1, str1, bol1)
-
+    
+    fmt.Println(num1 + 100)
 }
