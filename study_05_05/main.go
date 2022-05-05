@@ -3,7 +3,8 @@ package main
 // 一个包中只能有一个main函数，且main包只能有一个.go文件
 
 import(
-	"study_05_05/packageUse"
+//	"study_05_05/packageUse"
+	"fmt"
 ) 
 // 导入其他的包，多个时可使用import()
 
@@ -20,5 +21,17 @@ type Student struct {
 func main() {
 	// packageUse.OsUse()
 	// packageUse.Dup1()
-	packageUse.DupFromFile()
+	// packageUse.DupFromFile()
+	// packageUse.DupFromFile2()
+	// packageUse.DupHomeWork()
+	// packageUse.MainProcess()
+	var x int = 0
+	switch x {
+	case 1, 2, 3 :
+		fmt.Println("1, 2, 3")	
+	case 0, 4, 5 :
+		fmt.Println("0, 4, 5")
+	default :
+		fmt.Println("< 5")
+	}
 }

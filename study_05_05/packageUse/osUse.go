@@ -5,6 +5,7 @@ import (
 	"os"
 	"strings"
 	"bufio"
+	"io/ioutil"
 )
 
 func OsUse() {
@@ -69,5 +70,46 @@ func DupFromFile() {
 	}
 	for k, v := range counts {
 		fmt.Println(k, " ", v)
+	}
+}
+
+func DupFromFile2() {
+	var files = [3]string{"packageUse/data1.txt", "packageUse/data2.txt", "packageUse/data3.txt"}
+	counts := make(map[string] int)
+	for _, v := range files {
+		data, err := ioutil.ReadFile(v)
+		if err != nil {
+			fmt.Println(err)
+		}
+		strs := strings.Split(string(data), "\n")
+		for _, s := range strs {
+			counts[s] ++
+		}
+	}	
+	
+	for k, v := range counts {
+		fmt.Println(k, " ", v)
+	}
+}
+
+func DupHomeWork() {
+	var files = [3]string{"packageUse/data1.txt", "packageUse/data2.txt", "packageUse/data3.txt"}
+	
+	for _, file := range files {
+		data, err := ioutil.ReadFile(file)
+		if err != nil {
+			fmt.Println(err)
+		}
+		
+		// 当一个文件出现重复语句时，立即返回不再往下计数
+		counts := make(map[string] int)
+		strs := strings.Split(string(data), "\n")
+		for _, s := range strs {
+			counts[s] ++
+			if counts[s] == 2 {
+				fmt.Println(file)
+				break
+			}
+		}
 	}
 }
