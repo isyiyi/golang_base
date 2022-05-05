@@ -44,5 +44,6 @@ func main() {
 	fmt.Printf("%T\n", s)
 
 	fmt.Println("**************************************")
-	dataType.DataTypeUse()
+	// dataType.DataTypeUse()
+	dataType.UseArea()
 }
