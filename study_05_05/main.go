@@ -46,4 +46,5 @@ func main() {
 	fmt.Println("**************************************")
 	// dataType.DataTypeUse()
 	dataType.UseArea()
+	dataType.UseArea2()
 }
