@@ -11,12 +11,15 @@
 5. 短变量通常用于函数内部和if、for等初始化的时候，在包级向量初始化的地方不被允许
 6. 在打开文件时，如果在子包中定义的文件名，应该将路径写成从main.go所在的位置到文件所在的位置，而不是子包文件所在的位置相对于文件所在的位置
 如：子包路径为：
+```text
 test(directory)
 	main.go
 	sonPackage
 		fileOpen.go
 		data1.txt
 		data2.txt
+```
+
 **如果在fileopen.go路径写为（./data1.txt,./data2.txt）将会报错文件找不到，因为在执行时以main.go为根路径，所以文件路径应写为（sonPackage/data1.txt,sonPackage/data2.txt），尽管文件和fileOpen.go在同一目录下**
 
 switch语句不同于C语言中，一个case执行完之后默认有一个break不往下执行，如果非得向下执行可以使用fallthrough击穿条件。并且case条件也不一定是固定的字面量，可以是布尔表达式。switch后不一定非得跟字面量，类似于if和else，如：
