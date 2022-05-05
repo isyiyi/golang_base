@@ -1,6 +1,9 @@
 package dataType
 
-import "fmt"
+import(
+	"fmt"
+	"flag"
+)
 
 func DataTypeUse() {
 	// var name type = expression
@@ -33,4 +36,21 @@ func DataTypeUse() {
 	s8, t2, n2 := "Hello Golang", false, 120
 	fmt.Println(s8, t2, n2)
 	
+	var n = flag.Bool("n", false, "some message")
+	var seq = flag.String("seq", " ", "separator")
+	flag.Parse()
+	if *n {
+		fmt.Println(*seq)
+	}
+}
+
+func UseArea() {
+	x := "hello!"
+	for i := 0; i < len(x); i ++ {
+		x := x[i]
+		if x != '!' {
+			x := x + 'A' - 'a'
+			fmt.Printf("%c\n", x)
+		}
+	}
 }
