@@ -54,3 +54,23 @@ func UseArea() {
 		}
 	}
 }
+
+func f(x int) int {
+	return x
+}
+
+func g(x int) int {
+	return x + 10
+}
+
+func UseArea2() {
+	// if、switch、for等控制结构会产生新的隐式语法域
+	// 隐式语法域内部声明的变量从声明处到语法域末尾都是可以使用的
+	if x := f(20); x < 10 {
+		fmt.Println(x)		// x在整个if、else控制结构中都可使用
+	} else if y := g(x); y == x {	// y只有在此处声明之后才能使用，在上面是无法使用的
+		fmt.Println(y, x)
+	} else {
+		fmt.Println(x, y)
+	}
+}
