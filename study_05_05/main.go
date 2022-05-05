@@ -5,6 +5,7 @@ package main
 import(
 //	"study_05_05/packageUse"
 	"fmt"
+	"study_05_05/dataType"
 ) 
 // 导入其他的包，多个时可使用import()
 
@@ -34,4 +35,14 @@ func main() {
 	default :
 		fmt.Println("< 5")
 	}
+
+	s := &Student{
+		name: "kobe",
+		age: 37,
+	}
+	fmt.Println(s)
+	fmt.Printf("%T\n", s)
+
+	fmt.Println("**************************************")
+	dataType.DataTypeUse()
 }
