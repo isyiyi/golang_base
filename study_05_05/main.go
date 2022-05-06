@@ -47,5 +47,7 @@ func main() {
 	// dataType.DataTypeUse()
 	// dataType.UseArea()
 	// dataType.UseArea2()
-	dataType.AllDataType()
+	// dataType.AllDataType()
+	// dataType.BitCalc()
+	dataType.StrDemo()
 }
