@@ -74,4 +74,8 @@ func StrDemo() {
 	fmt.Printf("%T\n", gg)
 	var aa = 'c'
 	fmt.Printf("%T\n", aa)
+	
+	var nums = [3]int {1, 2, 3}
+	var nums2 = [3]int {1, 2, 3}
+	fmt.Println(nums == nums2)
 }
