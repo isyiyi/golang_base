@@ -7,5 +7,6 @@ func main() {
 	// fd.BDemo()
 	// fd.CalcTime()
 	// fd.PanicDemo()
-	fd.RecoverDemo()
+	// fd.RecoverDemo()
+	fd.FuncsDemo()
 }
