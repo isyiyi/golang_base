@@ -125,4 +125,180 @@ func f() {
 ---
 
 13. 因为selector可以选择方法和字段，所以结构体的字段和方法名不能一致，否则会冲突。不同类型的字段和方法名可以相同，因为reciver类型不同
-14. 
+14. golang和其他语言不同，可以将方法绑定到任何类型上，对于基础类型和数组等，需要先使用type对其进行命名
+15. 如果需要更新变量或者reciver对象太大时，可以使用指针类型作为reciver
+16. **如果一个类型的一个方法使用了指针类型作为reciver，那么它的任何方法都应该有一个指针类型作为reciver的版本，即便并不需要这样做**
+17. 本身 已经是指针类型的命名类型不允许指定方法
+18. reciver为指针类型还是普通类型，在调用的时候都可以使用普通变量或指针类型中的任意一种来调用，因为编译器会进行自动取地址和取值
+```golang
+type student struct {
+	name string
+	age int
+}
+
+func (stu *student) String() {
+	fmt.Println((*stu).name, (*stu).age)
+	fmt.Println(stu.name, stu.age)		// 不使用*取地址也可以，编译器会进行隐式转换
+}
+
+func main () {
+	var stu student = Student {name: "kobe", age: 37}
+	(&stu).String()	// 正确
+	stu.String() 	// 自动进行隐式转换
+}
+```
+
+19. 如果定义了一个变量是某个命名类型的指针，应避免复制这个指针的值，因为如果复制之后且使用了这个复制的指针对象的方法，将会修改原来对象的值。（两个指针变量指向同一块内存）
+```golang
+type newInt int
+func (xx *newInt) update(a newInt) {
+	*xx = a
+}
+
+var tmp newInt = 90
+var num = &tmp
+var num2 = num
+num2.update(10)		// 将会修改num的值
+
+```
+
+20. 即使是临时结构体，通过结构体内嵌，声明的变量仍然能够拿到嵌入结构体的方法
+```golang
+type student struct {
+	name string
+}
+
+func (s student) printg() {
+	fmt.Println(s.name)
+}
+
+var tmp = struct {
+	student
+	age int
+}{age: 90}
+
+tmp.printg()	// 通过定义临时结构体并内嵌student来使用student定义的方法
+```
+
+21. 如果子结构体和父结构体的方法名相同，如果直接调用，使用的是父结构体的方法；如果使用完整路径调用，将会使用指定的方法，但是要注意，任意类型的字段和方法名不能相同
+```golang
+type ast struct {
+	name string
+}
+
+func (a ast) printg() {
+	fmt.Println(a.name)
+}
+
+type bst struct {
+	ast
+	age int
+}
+
+func (b bst) printg() {
+	fmt.Println(b.age)
+}
+
+var b bst = bst{ast{"kobe"}, 37}
+b.printg()		// 37，直接调用父结构体的printg方法
+b.ast.printg()		// "kobe"，根据匿名类型的路径，调用指定的方法
+```
+
+22. 如果结构体内嵌的子结构体为匿名类型，那么不论是普通类型还是指针类型，都可以直接通过子结构体名来访问
+```golang
+type ast struct {
+	name string
+}
+
+type bst struct {
+	ast
+	age int
+}
+
+type cst struct {
+	*ast
+	school string
+}
+
+var b = bst{ast{"kobe"}, 37}
+var d bst
+d.ast = b.ast	// d = bst{ast{"kobe"}, 37}	// 通过ast匿名类型可以访问ast的内容
+
+var c cst = cst{&ast{"kobe"}, 37}
+var o cst
+o.ast = c.ast	// o = cst{&ast{"kobe"}, 37}	// 将c中初始化的ast{"kobe"}的地址赋值给o
+		// 通过ast匿名类型可以直接得到初始化的ast变量的地址
+// 总结：无论子结构体匿名类型是普通类型还是指针类型，都可以通过匿名类型的名称直接得到
+``` 
+
+23. **方法变量和方法表达式**
+	1. 方法变量的类型和函数变量的类型一模一样，区别在于方法变量是为函数指定了接收者；缺点在于，一旦指定了接收器，那么调用方法的对象就固定了，方法表达式可以解决这个问题
+	2. 方法表达式相比于方法变量的优点在于，不需要实现指定接收器，声明时直接使用`命名类型.方法名`，它的类型相比于函数变量/方法变量的类型多了一个参数，即接收器（将原来的接收器指定为函数的第一个形参）
+```golang
+func add(num1, num2 int) int {
+	return num1 + num2
+}
+
+func sub(num1, num2 int) int {
+	return num1 - num2
+}
+
+var f func(int, int) int
+var num1, num2 = 90, 80
+
+f = add
+res := f(num1, num2)	// res = 80 + 90 = 170
+f = sub
+res = f(num1, num2)	// res = 90 - 80 = 10
+
+type ast struct {
+	score int
+}
+
+func (a ast) printg(num1, num2 int) int {
+	return a.score + num1 + num2
+}
+
+var a ast = ast{20}
+f = a.printg		// 为方法指定接收器，虽然printg是方法，但是使用函数变量同样可以接收，因为类型相同
+res = f(num1, num2)	// res = 20 + 80 + 90 = 190
+
+// ==========================================方法表达式
+
+
+type ast struct {
+	name string
+	age int
+}
+
+func (a ast) printg() {
+	fmt.Println(a.name, a.age)
+}
+
+var asts = []int{ast{"kobe", 37}, ast{"james", 38}}
+var f func(ast) = ast.printg		// 虽然想要调用的printg方法没有参数，但是使用方法表达式时reciver要作为第一个参数，所以函数变量要将第一个参数命名为指定的类型，且reciver不需要指定为某个固定的对象，直接使用命名类型就好
+for _, v := range asts {
+	f(v)
+}
+```
+
+24. golang中结构体中的字段无论是否导出，对于同一个包内的代码都是可见的，golang封装的单元是包而不是类型。（使用首字母大小写来区分是否对外包导出，而不是private、public等）
+25. getter和setter函数，getter函数一般以字段的首字符大写命名，setter函数一般就是用Set+字段名字
+```golang
+type student struct {
+	name string
+	age int
+}
+
+func (s student) Name () string {
+	return s.name
+}
+func (s student) SetName(name string) {
+	s.name = name
+}
+```
+
+26. 封装的优点：
+	1. 对外隐藏函数的具体实现细节，使调用者只需要知道参数和调用方式，不需要了解具体实现，对于开发者更新算法内容也有益处
+	2. 因为封装之后只有同一个包内的函数才能修改变量的值，所以可以防止调用者肆意修改对象的变量，造成逻辑混乱
+	3. 因为调用者不能直接修改对象的值，所以不需要额外去检测值的合法性（开发者只用专心自己开发内容的合逻辑性）
