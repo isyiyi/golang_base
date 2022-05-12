@@ -52,8 +52,8 @@ ch <- 70
 ch <- 60	// 程序将会被阻塞，直到有协程消费了里面的数据
 ```
 
-10. `cap`可以直到通道缓冲区的容量，`len`可以直到通道缓冲区已经有多少个元素
-11. for range xxx的用法 **`for range`可以用来清空一个channel**
+10. `cap`可以知道通道缓冲区的容量，`len`可以直到通道缓冲区已经有多少个元素
+11. for range xxx的用法（用于不关心内部元素，只关心这个变量的长度） **`for range`可以用来清空一个channel**
 ```golang
 var nums = []int { 1, 2, 3, 4}
 for _, v := range nums {
@@ -68,8 +68,19 @@ var ch chan int = make(chan int, 3)
 ch <- 10
 ch <- 20
 ch <- 30
+
+// for range的由来
+for x := range ch {
+	// 对内部元素并不关心，可以将x改为_
+}
+
+for _ = range ch {
+	// 与其这样写，不如直接省略掉_
+}
+
 // 如果对channel里面的元素并不关心，使用for range可以快速清空
-for range ch{}
+for range ch{
+}
 ```
 
 12. select语句也包含一系列的情况和对应的分支，select一直等待，直到一次通信来告知有分支可以执行，执行完该分支后其他分支将不会执行。
@@ -93,7 +104,7 @@ select {
 select {
 	case x := <-ch :
 		fmt.Println(x)
-	case ch <- 80 :
+	case ch2 <- 80 :
 		xxx		// 执行这一句，执行完之后就结束了
 }				// 对于所有的case分支，select是能执行哪个就执行哪个，执行完之后直接结束
 
@@ -140,4 +151,4 @@ close(done)
 // 此时所有的协程调用isCancelled函数的结果都是true，因为case<-done这个分支被激活了
 ```
 
-18. main goroutine要结束时，所有的goroutine都理解停止执行，主函数返回，程序随之退出。此时并不能确定释放了所有的资源。此时可以调用panic，运行时将转储程序中所有goroutine的栈。
+18. main goroutine要结束时，所有的goroutine都立即停止执行，主函数返回，程序随之退出。此时并不能确定释放了所有的资源。此时可以调用panic，运行时将转储程序中所有goroutine的栈。
